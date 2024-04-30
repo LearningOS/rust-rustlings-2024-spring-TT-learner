@@ -2,7 +2,6 @@
 	single linked list merge
 	This problem requires you to merge two ordered singly linked lists into one ordered singly linked list
 */
-// I AM NOT DONE
 
 use std::fmt::{self, Display, Formatter};
 use std::ptr::NonNull;
@@ -29,13 +28,13 @@ struct LinkedList<T> {
     end: Option<NonNull<Node<T>>>,
 }
 
-impl<T> Default for LinkedList<T> {
+impl<T: std::cmp::PartialOrd + Clone> Default for LinkedList<T> {
     fn default() -> Self {
         Self::new()
     }
 }
 
-impl<T> LinkedList<T> {
+impl<T: std::cmp::PartialOrd + Clone> LinkedList<T> {
     pub fn new() -> Self {
         Self {
             length: 0,
@@ -72,11 +71,38 @@ impl<T> LinkedList<T> {
 	pub fn merge(list_a:LinkedList<T>,list_b:LinkedList<T>) -> Self
 	{
 		//TODO
-		Self {
-            length: 0,
-            start: None,
-            end: None,
+		// Self {
+        //     length: 0,
+        //     start: None,
+        //     end: None,
+        // }
+        let mut res: Self= Self::new();
+        let (mut l1,mut l2) = (list_a.start,list_b.start);
+        while l1.is_some() && l2.is_some(){
+            let l1_ptr = l1.unwrap();
+            let l2_ptr = l2.unwrap();
+            if unsafe{(*l1_ptr.as_ptr()).val.clone()}<unsafe{(*l2_ptr.as_ptr()).val.clone()}
+            {
+                // res.push_back(unsafe{(*l1_ptr.as_ptr()).val});
+                res.add(unsafe{(*l1_ptr.as_ptr()).val.clone()});
+                l1 = unsafe{(*l1_ptr.as_ptr()).next};
+            }
+            else{
+                res.add(unsafe{(*l2_ptr.as_ptr()).val.clone()});
+                l2 = unsafe{(*l2_ptr.as_ptr()).next};
+            }
         }
+        while l1.is_some(){
+            let l1_ptr = l1.unwrap();
+            res.add(unsafe{(*l1_ptr.as_ptr()).val.clone()});
+            l1 = unsafe{(*l1_ptr.as_ptr()).next};
+        }
+        while l2.is_some(){
+            let l2_ptr = l2.unwrap();
+            res.add(unsafe{(*l2_ptr.as_ptr()).val.clone()});
+            l2 = unsafe{(*l2_ptr.as_ptr()).next};
+        }
+        res
 	}
 }
 

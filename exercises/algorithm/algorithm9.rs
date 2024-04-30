@@ -2,7 +2,6 @@
 	heap
 	This question requires you to implement a binary heap function
 */
-// I AM NOT DONE
 
 use std::cmp::Ord;
 use std::default::Default;
@@ -36,8 +35,19 @@ where
         self.len() == 0
     }
 
+    // I dont understand know what the hell i typed. Well, you know, this code pass the test.
+    // C-O-N-F-U-S-I-N-G
     pub fn add(&mut self, value: T) {
         //TODO
+        self.items.push(value);
+        self.count += 1;
+        let mut heap_ptr = self.count;
+
+        while heap_ptr > 1 && (self.comparator)(&self.items[heap_ptr], &self.items[self.parent_idx(heap_ptr)]){
+            let parent = self.parent_idx(heap_ptr);
+            self.items.swap(heap_ptr, parent);
+            heap_ptr = parent;
+        } 
     }
 
     fn parent_idx(&self, idx: usize) -> usize {
@@ -58,7 +68,15 @@ where
 
     fn smallest_child_idx(&self, idx: usize) -> usize {
         //TODO
-		0
+        let (left, right) = (self.left_child_idx(idx), self.right_child_idx(idx));
+        if right > self.count {
+            left
+        } else if (self.comparator)(&self.items[left], &self.items[right]){
+            left
+        } else {
+            right
+        }
+		
     }
 }
 
@@ -85,7 +103,28 @@ where
 
     fn next(&mut self) -> Option<T> {
         //TODO
-		None
+
+        if self.is_empty() {
+            return None
+        };
+
+        let mut top = self.items.swap_remove(1);
+        self.count = self.count - 1;
+
+        let mut temp = 1;
+
+        let mut idx = 1;
+        while self.children_present(idx) {
+            let smallest = self.smallest_child_idx(idx);
+            if (self.comparator)(&self.items[smallest], &self.items[idx]){
+                self.items.swap(smallest, idx);
+                idx = smallest;
+            } else {
+                break;
+            }
+        } 
+        
+        Some(top)
     }
 }
 
